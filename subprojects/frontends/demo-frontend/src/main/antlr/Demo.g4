@@ -1,14 +1,9 @@
-grammar demo;
+grammar Demo;
 
-// TODO check if anything can be simplified;
-// TODO branching
+// TODO add rules for branching
 
 // parser rules - order does not matter
-model: (line)+;
-
-line: assignment
-    | assertion
-    ;
+model: (assignment)* assertion;
 
 assignment: VarName ':=' (expression|value); // why do we have value instead of Const?
 
@@ -18,14 +13,17 @@ expression: (VarName|Const) BinOp (VarName|Const); // how to modify, so that we 
 
 // the fact that it is parseable does not mean it is semantically correct/meaningful!
 // e.g., here: we do not check if varName is anywhere else
-comparison: VarName Equal Const;
+comparison: VarName ComparisonOp Const;
 
-value: Const|'Input';
+value: Const|'input';
 
 // lexer rules - order does matter! How are they differentiated from
 VarName: Letter(Letter|Digit|Underscore)*; // * vs ? vs + (like regex)
 
+ComparisonOp: Equal | Less | Greater;
 Equal: '==';
+Less : '<';
+Greater : '>';
 
 // could we make this to be a parser rule instead? Any parser rules that could be made into a parser rule instead?
 BinOp : Plus | Minus;
@@ -38,3 +36,15 @@ Underscore : '_';
 Const: (Minus)?(Digit)+;
 Letter: [a-z];
 Digit: [0-9];
+
+Whitespace
+    :   [ \t]+
+        -> skip
+    ;
+
+Newline
+    :   (   '\r' '\n'?
+        |   '\n'
+        )
+        -> skip
+    ;
