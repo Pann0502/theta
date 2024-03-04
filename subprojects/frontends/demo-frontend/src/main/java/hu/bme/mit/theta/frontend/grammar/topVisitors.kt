@@ -88,6 +88,7 @@ fun main() {
         var1 := 2
         var2 := input
         var3 := var1 + var2
+        var4 := 3
         assert var3 < 10
     """.trimIndent()
 
