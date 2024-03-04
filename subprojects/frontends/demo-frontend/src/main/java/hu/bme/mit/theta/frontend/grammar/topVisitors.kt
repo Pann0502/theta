@@ -32,9 +32,54 @@ class ModelVisitor : DemoBaseVisitor<String>() {
         }
     }
 
+    override fun visitVariableDeclaration(ctx: DemoParser.VariableDeclarationContext?): String {
+        val variableName = ctx!!.VarName().text
+        val variableType = ctx.type().accept(this)
+        return "val $variableName: $variableType"
+    }
+
     override fun visitAssertion(ctx: DemoParser.AssertionContext?): String {
         return "assert " + ctx!!.comparison().text
     }
+
+    override fun visitArithmeticExpression(ctx: DemoParser.ArithmeticExpressionContext?): String {
+        val leftOperand = ctx!!.leftOperand.accept(this)
+        val operator = ctx.operator.text
+        val rightOperand = ctx.rightOperand.accept(this)
+        return "($leftOperand $operator $rightOperand)"
+    }
+
+    override fun visitIfStatement(ctx: DemoParser.IfStatementContext?): String {
+        val condition = ctx!!.condition().accept(this)
+        val thenBranch = ctx.thenBranch().accept(this)
+        val elseBranch = ctx.elseBranch()?.accept(this) ?: ""
+        return "if ($condition) {\n$thenBranch\n} else {\n$elseBranch\n}"
+    }
+
+    override fun visitLogicalExpression(ctx: DemoParser.LogicalExpressionContext?): String {
+        val leftOperand = ctx!!.leftOperand.accept(this)
+        val operator = ctx.operator.text
+        val rightOperand = ctx.rightOperand.accept(this)
+        return "($leftOperand $operator $rightOperand)"
+    }
+
+    override fun visitLoop(ctx: DemoParser.LoopContext?): String {
+        val condition = ctx!!.condition().accept(this)
+        val body = ctx.body().accept(this)
+        return "while ($condition) {\n$body\n}"
+    }
+
+    override fun visitBreakStatement(ctx: DemoParser.BreakStatementContext?): String {
+        return "break"
+    }
+
+    override fun visitContinueStatement(ctx: DemoParser.ContinueStatementContext?): String {
+        return "continue"
+    }
+
+
+
+
 }
 
 fun main() {
